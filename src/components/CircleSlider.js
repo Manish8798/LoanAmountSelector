@@ -1,5 +1,13 @@
 import React, {Component} from 'react';
-import {PanResponder, View, Dimensions, TextInput, Text} from 'react-native';
+import {
+  PanResponder,
+  View,
+  Dimensions,
+  TextInput,
+  Text,
+  Button,
+  StyleSheet,
+} from 'react-native';
 import Svg, {
   Path,
   Circle,
@@ -142,6 +150,10 @@ export default class CircleSlider extends Component {
     return mappedAngle;
   };
 
+  amountText = () => (
+    <Text style={{fontSize: 16, color: '#714fff'}}>₹2,00,000</Text>
+  );
+
   render() {
     let width = (this.props.dialRadius + this.props.btnRadius) * 2;
     let bR = this.props.btnRadius;
@@ -151,26 +163,44 @@ export default class CircleSlider extends Component {
     let value = this.convertAngleToValue(this.state.angle);
 
     return (
-      <View style={{alignSelf: 'center'}}>
-        <Svg
-          onLayout={this.doStuff}
-          ref="circleslider"
-          width={width}
-          height={width}>
-          <Defs>
-            <LinearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <Stop offset="0%" stopColor={'#ecebf6'} />
-              <Stop offset="100%" stopColor={'#ecebf6'} />
-            </LinearGradient>
-          </Defs>
-          <Circle
-            r={dR}
-            cx={width / 2}
-            cy={width / 2}
-            stroke={this.state.angle == 0 ? '#ecebf6' : '#714fff'}
-            strokeWidth={15}
-            fill="none"></Circle>
-          {/* <Text
+      <View
+        style={{
+          flex: 1,
+          width: '100%',
+          height: '100%',
+          justifyContent: 'space-between',
+        }}>
+        <View style={styles.textContainer}>
+          <Text style={styles.headText}>Select a loan amount</Text>
+          <Text style={styles.subText}>
+            You are eligible for loan upto {this.amountText()}
+          </Text>
+        </View>
+        <View
+          style={{
+            alignSelf: 'center',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <Svg
+            onLayout={this.doStuff}
+            ref="circleslider"
+            width={width}
+            height={width}>
+            <Defs>
+              <LinearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <Stop offset="0%" stopColor={'#ecebf6'} />
+                <Stop offset="100%" stopColor={'#ecebf6'} />
+              </LinearGradient>
+            </Defs>
+            <Circle
+              r={dR}
+              cx={width / 2}
+              cy={width / 2}
+              stroke={this.state.angle == 0 ? '#ecebf6' : '#714fff'}
+              strokeWidth={15}
+              fill="none"></Circle>
+            {/* <Text
             x={width / 2}
             y={width / 2 + 50}
             fontSize={14}
@@ -178,72 +208,83 @@ export default class CircleSlider extends Component {
             textAnchor="middle">
             {`Start Coord X: ${startCoord.x}, Y: ${startCoord.y}`}
           </Text> */}
-          <Path
-            stroke={'url(#gradient1)'}
-            strokeWidth={this.props.dialWidth}
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d={`M${startCoord.x} ${startCoord.y} A ${dR} ${dR} 1 ${
-              (this.props.startCoord + 180) % 360 > this.state.angle ? 1 : 0
-            } 0 ${endCoord.x} ${endCoord.y}`}
-          />
+            <Path
+              stroke={'url(#gradient1)'}
+              strokeWidth={this.props.dialWidth}
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d={`M${startCoord.x} ${startCoord.y} A ${dR} ${dR} 1 ${
+                (this.props.startCoord + 180) % 360 > this.state.angle ? 1 : 0
+              } 0 ${endCoord.x} ${endCoord.y}`}
+            />
 
-          <G x={endCoord.x - bR} y={endCoord.y - bR}>
-            <Circle
-              r={bR + 5}
-              cx={bR}
-              cy={bR}
-              fill={'#fff'}
-              stroke={'#E1D9D1'}
-              strokeWidth={1}
-              {...this._panResponder.panHandlers}></Circle>
+            <G x={endCoord.x - bR} y={endCoord.y - bR}>
+              <Circle
+                r={bR + 5}
+                cx={bR}
+                cy={bR}
+                fill={'#fff'}
+                stroke={'#E1D9D1'}
+                strokeWidth={1}
+                {...this._panResponder.panHandlers}></Circle>
 
-            <Circle
-              r={bR / 2 + 1}
-              cx={bR}
-              cy={bR}
-              fill={'#714fff'}
-              {...this._panResponder.panHandlers}></Circle>
-          </G>
-        </Svg>
-        <View
-          style={{
-            position: 'absolute',
-            alignSelf: 'center',
-            justifyContent: 'center',
-            top: '32%',
-            // width: width / 2,
-            zIndex: 100,
-          }}>
-          <Text
+              <Circle
+                r={bR / 2 + 1}
+                cx={bR}
+                cy={bR}
+                fill={'#714fff'}
+                {...this._panResponder.panHandlers}></Circle>
+            </G>
+          </Svg>
+          <View
             style={{
-              textAlign: 'center',
-              fontSize: 12,
-              padding: 10,
-              fontWeight: '500',
+              position: 'absolute',
+              alignSelf: 'center',
+              justifyContent: 'center',
+              top: '32%',
+              // width: width / 2,
+              zIndex: 100,
             }}>
-            LOAN AMOUNT
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 12,
+                padding: 10,
+                fontWeight: '500',
+              }}>
+              LOAN AMOUNT
+            </Text>
+            <TextInput
+              style={{
+                fontSize: 24,
+                color: this.props.textColor,
+                textAlign: 'center',
+                backgroundColor: '#ecebf6',
+                borderRadius: 10,
+                fontWeight: 'bold',
+                paddingVertical: 5,
+                paddingHorizontal: 2,
+              }}
+              value={
+                this.props.showValue && this.state.inputValue == 0
+                  ? `₹${endCoord.v}`
+                  : `₹${this.state.inputValue}`
+              }
+              onChange={e => this.onInputChange(e)}
+              editable={true}
+              keyboardType="numeric"
+            />
+          </View>
+          <Text style={{textAlign: 'center', padding: 20}}>
+            Lorem ipsum dolor sit amet consectetur. Neque.
           </Text>
-          <TextInput
-            style={{
-              fontSize: 24,
-              color: this.props.textColor,
-              textAlign: 'center',
-              backgroundColor: '#ecebf6',
-              borderRadius: 10,
-              fontWeight: 'bold',
-              paddingVertical: 5,
-              paddingHorizontal: 2,
-            }}
-            value={
-              this.props.showValue && this.state.inputValue == 0
-                ? `₹${endCoord.v}`
-                : `₹${this.state.inputValue}`
-            }
-            onChange={e => this.onInputChange(e)}
-            editable={true}
-            keyboardType="numeric"
+        </View>
+        <View style={styles.footer}>
+          <Button
+            disabled={parseInt(endCoord.v) < 5000 ? true : false}
+            color={'#714fff'}
+            title="submit"
           />
         </View>
       </View>
@@ -267,3 +308,31 @@ CircleSlider.defaultProps = {
   startCoord: 0,
   //   onValueChange: x => x,
 };
+
+const styles = StyleSheet.create({
+  footer: {
+    // position: 'absolute',
+    bottom: 0,
+    start: 0,
+    end: 0,
+    padding: 30,
+    elevation: 2,
+    borderTopColor: '#ccc',
+  },
+  headText: {
+    fontSize: 20,
+    color: '#000',
+    letterSpacing: 0,
+    fontWeight: 'bold',
+  },
+  subText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginVertical: 10,
+    color: 'gray',
+  },
+  textContainer: {
+    margin: 20,
+    marginBottom: 5,
+  },
+});
