@@ -32,7 +32,7 @@ export default class CircleSlider extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(prevState.angle != this.state.angle);
+    // console.log(prevState.angle != this.state.angle);
     if (prevState.angle != this.state.angle) {
       let value = this.convertAngleToValue(this.state.angle);
       this.updateInputValueDebounced(value, 'componentDidUpdate');
@@ -40,7 +40,7 @@ export default class CircleSlider extends Component {
   }
 
   componentWillMount() {
-    console.log('componentWillMount');
+    // console.log('componentWillMount');
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (e, gs) => true,
       onStartShouldSetPanResponderCapture: (e, gs) => true,
@@ -60,7 +60,7 @@ export default class CircleSlider extends Component {
   polarToCartesian(angle) {
     // this.setState({inputValue: v});
     // this.updateInputValueDebounced(v);
-    console.log('polarToCartesian', angle);
+    // console.log('polarToCartesian', angle);
     // const v = this.convertAngleToValue(parseInt(angle));
     // this.updateInputValueDebounced(v, 'polarToCartesian');
     let r = this.props.dialRadius;
@@ -73,7 +73,7 @@ export default class CircleSlider extends Component {
   }
 
   cartesianToPolar(x, y) {
-    console.log('cartesianToPolar');
+    // console.log('cartesianToPolar');
     let hC = this.props.dialRadius + this.props.btnRadius;
 
     if (x === 0) {
@@ -89,7 +89,7 @@ export default class CircleSlider extends Component {
   }
 
   handleMeasure = (ox, oy, width, height, px, py) => {
-    console.log('handleMeasure');
+    // console.log('handleMeasure');
     this.setState({
       xCenter: px + (this.props.dialRadius + this.props.btnRadius),
       yCenter: py + (this.props.dialRadius + this.props.btnRadius),
@@ -97,7 +97,7 @@ export default class CircleSlider extends Component {
   };
 
   doStuff = () => {
-    console.log('doStuff');
+    // console.log('doStuff');
     this.refs.circleslider.measure(this.handleMeasure);
   };
   onValueChange = value => {
@@ -106,7 +106,7 @@ export default class CircleSlider extends Component {
   };
 
   onInputChange = event => {
-    console.log(event.nativeEvent);
+    // console.log(event.nativeEvent);
     let text = this.removeRupeeSymbol(event.nativeEvent.text);
     if (text.length == 5) return;
     this.updateInputValueDebounced(text, 'onInputChange');
@@ -161,18 +161,18 @@ export default class CircleSlider extends Component {
   );
 
   updateInputValueDebounced = debounce((value, type) => {
-    console.log('Updating input value 1:', value, this.state.angle);
+    // console.log('Updating input value 1:', value, this.state.angle);
 
-    if (this.state.angle && type == 'onInputChange') {
+    if (type == 'onInputChange') {
       this.setState({inputValue: value});
       // Ensure that the input value is a number
       const angle = this.convertValueToAngle(parseInt(value));
       if (!isNaN(angle)) {
-        console.log('onInputChange 2', value);
+        // console.log('onInputChange 2', value);
         this.setState({angle});
       }
     } else {
-      console.log('onInputChange 3', value);
+      //   console.log('onInputChange 3', value);
       this.setState({inputValue: value});
     }
   }, 100);
