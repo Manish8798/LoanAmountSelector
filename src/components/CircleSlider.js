@@ -41,17 +41,19 @@ export default class CircleSlider extends Component {
   }
 
   polarToCartesian(angle) {
-    // this.convertAngleToValue(parseInt(angle));
+    let v = this.convertAngleToValue(parseInt(angle));
+    console.log('polarToCartesian', v);
     let r = this.props.dialRadius;
     let hC = this.props.dialRadius + this.props.btnRadius;
     let a = ((angle - 90) * Math.PI) / 180.0;
 
     let x = hC + r * Math.cos(a);
     let y = hC + r * Math.sin(a);
-    return {x, y};
+    return {x, y, v};
   }
 
   cartesianToPolar(x, y) {
+    console.log('cartesianToPolar');
     let hC = this.props.dialRadius + this.props.btnRadius;
 
     if (x === 0) {
@@ -83,19 +85,24 @@ export default class CircleSlider extends Component {
     return this.convertAngleToValue(this.state.angle);
   };
 
-  onInputChange = (v, event) => {
+  onInputChange = event => {
     console.log(event.nativeEvent);
-    this.setState({inputValue: event.nativeEvent.text});
+    let text = this.removeRupeeSymbol(event.nativeEvent.text);
+    if (text.length == 5) return;
 
-    if (event.nativeEvent.text.length == 5) return;
+    this.setState({inputValue: text});
 
     // Ensure that the input value is a number
-    const angle = this.convertValueToAngle(parseFloat(event.nativeEvent.text));
-    console.log('onInputChange', v, event.nativeEvent.text);
+    const angle = this.convertValueToAngle(parseFloat(text));
     if (!isNaN(angle)) {
-      console.log('onInputChange', v, event.nativeEvent.text);
+      console.log('onInputChange', text);
       this.setState({angle});
     }
+  };
+
+  removeRupeeSymbol = text => {
+    // Use the replace method to remove the '₹' character
+    return text.replace(/₹/g, '');
   };
 
   convertAngleToValue = (angle = parseInt(angle)) => {
@@ -144,7 +151,7 @@ export default class CircleSlider extends Component {
     let value = this.convertAngleToValue(this.state.angle);
 
     return (
-      <View style={{}}>
+      <View style={{alignSelf: 'center'}}>
         <Svg
           onLayout={this.doStuff}
           ref="circleslider"
@@ -204,15 +211,17 @@ export default class CircleSlider extends Component {
           style={{
             position: 'absolute',
             alignSelf: 'center',
+            justifyContent: 'center',
             top: '32%',
-            width: width / 2,
+            // width: width / 2,
             zIndex: 100,
           }}>
           <Text
             style={{
               textAlign: 'center',
-              fontSize: 16,
+              fontSize: 12,
               padding: 10,
+              fontWeight: '500',
             }}>
             LOAN AMOUNT
           </Text>
@@ -224,9 +233,15 @@ export default class CircleSlider extends Component {
               backgroundColor: '#ecebf6',
               borderRadius: 10,
               fontWeight: 'bold',
+              paddingVertical: 5,
+              paddingHorizontal: 2,
             }}
-            value={this.props.showValue && value + ''}
-            onChange={e => this.onInputChange(value, e)}
+            value={
+              this.props.showValue && this.state.inputValue == 0
+                ? `₹${endCoord.v}`
+                : `₹${this.state.inputValue}`
+            }
+            onChange={e => this.onInputChange(e)}
             editable={true}
             keyboardType="numeric"
           />
