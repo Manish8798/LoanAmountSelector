@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {PanResponder, View, Dimensions, TextInput} from 'react-native';
+import {PanResponder, View, Dimensions, TextInput, Text} from 'react-native';
 import Svg, {
   Path,
   Circle,
   G,
-  Text,
+  //   Text,
   Defs,
   LinearGradient,
   Stop,
@@ -23,6 +23,7 @@ export default class CircleSlider extends Component {
   }
 
   componentWillMount() {
+    console.log('componentWillMount');
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (e, gs) => true,
       onStartShouldSetPanResponderCapture: (e, gs) => true,
@@ -40,6 +41,7 @@ export default class CircleSlider extends Component {
   }
 
   polarToCartesian(angle) {
+    // this.convertAngleToValue(parseInt(angle));
     let r = this.props.dialRadius;
     let hC = this.props.dialRadius + this.props.btnRadius;
     let a = ((angle - 90) * Math.PI) / 180.0;
@@ -65,6 +67,7 @@ export default class CircleSlider extends Component {
   }
 
   handleMeasure = (ox, oy, width, height, px, py) => {
+    console.log('handleMeasure');
     this.setState({
       xCenter: px + (this.props.dialRadius + this.props.btnRadius),
       yCenter: py + (this.props.dialRadius + this.props.btnRadius),
@@ -72,21 +75,64 @@ export default class CircleSlider extends Component {
   };
 
   doStuff = () => {
+    console.log('doStuff');
     this.refs.circleslider.measure(this.handleMeasure);
   };
-  onValueChange = angle => {
-    this.setState({inputValue: angle.toString()});
-    return angle;
+  onValueChange = value => {
+    this.setState({inputValue: value.toString()});
+    return this.convertAngleToValue(this.state.angle);
   };
 
-  onInputChange = text => {
-    this.setState({inputValue: text});
+  onInputChange = (v, event) => {
+    console.log(event.nativeEvent);
+    this.setState({inputValue: event.nativeEvent.text});
+
+    if (event.nativeEvent.text.length == 5) return;
 
     // Ensure that the input value is a number
-    const angle = parseFloat(text);
+    const angle = this.convertValueToAngle(parseFloat(event.nativeEvent.text));
+    console.log('onInputChange', v, event.nativeEvent.text);
     if (!isNaN(angle)) {
+      console.log('onInputChange', v, event.nativeEvent.text);
       this.setState({angle});
     }
+  };
+
+  convertAngleToValue = (angle = parseInt(angle)) => {
+    // Define the value range
+    const minValue = 0;
+    const maxValue = 10000;
+
+    // Define the angle range (e.g., 0 to 360 degrees)
+    const minAngle = 0;
+    const maxAngle = 360;
+
+    // Calculate the reverse mapped value
+    const reverseMappedValue =
+      ((angle - minAngle) / (maxAngle - minAngle)) * (maxValue - minValue) +
+      minValue;
+
+    // Now, `reverseMappedValue` contains the value corresponding to your angle
+    // console.log(Math.round(reverseMappedValue));
+    return Math.round(reverseMappedValue);
+  };
+
+  convertValueToAngle = value => {
+    // Define the value range
+    const minValue = 0;
+    const maxValue = 10000;
+
+    // Define the angle range (e.g., 0 to 360 degrees)
+    const minAngle = 0;
+    const maxAngle = 360;
+
+    // Calculate the mapped angle
+    const mappedAngle =
+      ((value - minValue) / (maxValue - minValue)) * (maxAngle - minAngle) +
+      minAngle;
+
+    // Now, `mappedAngle` contains the angle corresponding to your value
+    return mappedAngle;
   };
 
   render() {
@@ -95,6 +141,7 @@ export default class CircleSlider extends Component {
     let dR = this.props.dialRadius;
     let startCoord = this.polarToCartesian(this.props.startCoord);
     let endCoord = this.polarToCartesian(this.state.angle);
+    let value = this.convertAngleToValue(this.state.angle);
 
     return (
       <View style={{}}>
@@ -114,9 +161,8 @@ export default class CircleSlider extends Component {
             cx={width / 2}
             cy={width / 2}
             stroke={this.state.angle == 0 ? '#ecebf6' : '#714fff'}
-            strokeWidth={20}
-            fill="none"
-          />
+            strokeWidth={15}
+            fill="none"></Circle>
           {/* <Text
             x={width / 2}
             y={width / 2 + 50}
@@ -141,37 +187,61 @@ export default class CircleSlider extends Component {
               r={bR + 5}
               cx={bR}
               cy={bR}
-              fill={'yellow'}
-              {...this._panResponder.panHandlers}
-            />
+              fill={'#fff'}
+              stroke={'#E1D9D1'}
+              strokeWidth={1}
+              {...this._panResponder.panHandlers}></Circle>
+
+            <Circle
+              r={bR / 2 + 1}
+              cx={bR}
+              cy={bR}
+              fill={'#714fff'}
+              {...this._panResponder.panHandlers}></Circle>
           </G>
         </Svg>
-        <TextInput
+        <View
           style={{
             position: 'absolute',
             alignSelf: 'center',
-            top: width / 3,
+            top: '32%',
             width: width / 2,
-            fontSize: this.props.textSize,
-            color: this.props.textColor,
             zIndex: 100,
-            textAlign: 'center',
-          }}
-          value={this.props.showValue && this.state.inputValue + ''}
-          onChange={this.onInputChange}
-          editable={true}
-        />
+          }}>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 16,
+              padding: 10,
+            }}>
+            LOAN AMOUNT
+          </Text>
+          <TextInput
+            style={{
+              fontSize: 24,
+              color: this.props.textColor,
+              textAlign: 'center',
+              backgroundColor: '#ecebf6',
+              borderRadius: 10,
+              fontWeight: 'bold',
+            }}
+            value={this.props.showValue && value + ''}
+            onChange={e => this.onInputChange(value, e)}
+            editable={true}
+            keyboardType="numeric"
+          />
+        </View>
       </View>
     );
   }
 }
 
 CircleSlider.defaultProps = {
-  btnRadius: 13,
+  btnRadius: 12,
   dialRadius: 130,
-  dialWidth: 20,
+  dialWidth: 15,
   textColor: 'white',
-  textSize: 50,
+  textSize: 32,
   value: 0,
   xCenter: Dimensions.get('window').width / 2,
   yCenter: Dimensions.get('window').height / 2,
