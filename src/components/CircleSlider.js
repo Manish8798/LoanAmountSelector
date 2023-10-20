@@ -151,7 +151,8 @@ export default class CircleSlider extends Component {
       minAngle;
 
     // Now, `mappedAngle` contains the angle corresponding to your value
-    return Math.round(mappedAngle);
+    // console.log('raw', mappedAngle, Math.round(mappedAngle));
+    return mappedAngle;
   };
 
   amountText = () => (
@@ -185,13 +186,7 @@ export default class CircleSlider extends Component {
     let endCoord = this.polarToCartesian(this.state.angle);
 
     return (
-      <View
-        style={{
-          flex: 1,
-          width: '100%',
-          height: '100%',
-          justifyContent: 'space-between',
-        }}>
+      <View style={styles.container}>
         <View style={styles.textContainer}>
           <Text style={styles.headText}>Select a loan amount</Text>
           <Text style={styles.subText}>
@@ -278,16 +273,7 @@ export default class CircleSlider extends Component {
               LOAN AMOUNT
             </Text>
             <TextInput
-              style={{
-                fontSize: 24,
-                color: this.props.textColor,
-                textAlign: 'center',
-                backgroundColor: '#ecebf6',
-                borderRadius: 10,
-                fontWeight: 'bold',
-                paddingVertical: 5,
-                paddingHorizontal: 2,
-              }}
+              style={styles.input}
               value={this.props.showValue && `₹${this.state.inputValue}`}
               onChange={e => this.onInputChange(e)}
               editable={true}
@@ -328,6 +314,13 @@ CircleSlider.defaultProps = {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+  },
   footer: {
     // position: 'absolute',
     bottom: 0,
@@ -352,5 +345,15 @@ const styles = StyleSheet.create({
   textContainer: {
     margin: 20,
     marginBottom: 5,
+  },
+  input: {
+    fontSize: 24,
+    color: this.props?.textColor,
+    textAlign: 'center',
+    backgroundColor: '#ecebf6',
+    borderRadius: 10,
+    fontWeight: 'bold',
+    paddingVertical: 5,
+    paddingHorizontal: 2,
   },
 });
