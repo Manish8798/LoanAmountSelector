@@ -22,6 +22,8 @@ import debounce from 'lodash.debounce';
 export default class CircleSlider extends Component {
   constructor(props) {
     super(props);
+    this._svg = React.createRef();
+    this._panResponder = React.createRef();
 
     this.state = {
       angle: this.props.value,
@@ -39,7 +41,7 @@ export default class CircleSlider extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // console.log('componentWillMount');
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (e, gs) => true,
@@ -98,7 +100,8 @@ export default class CircleSlider extends Component {
 
   doStuff = () => {
     // console.log('doStuff');
-    this.refs.circleslider.measure(this.handleMeasure);
+    // this.refs.circleslider.measure(this.handleMeasure);
+    this._svg.measure(this.handleMeasure);
   };
   onValueChange = value => {
     this.setState({inputValue: value.toString()});
@@ -201,7 +204,8 @@ export default class CircleSlider extends Component {
           }}>
           <Svg
             onLayout={this.doStuff}
-            ref="circleslider"
+            // ref="circleslider"
+            ref={svg => (this._svg = svg)}
             width={width}
             height={width}>
             <Defs>
