@@ -71,6 +71,7 @@ export default class CircleSlider extends Component {
 
     let x = hC + r * Math.cos(a);
     let y = hC + r * Math.sin(a);
+    console.log('polarToCartesian', x, y);
     return {x, y};
   }
 
@@ -293,6 +294,9 @@ export default class CircleSlider extends Component {
             disabled={parseInt(this.state.inputValue) < 5000 ? true : false}
             color={'#714fff'}
             title="submit"
+            onPress={() => {
+              this.setState({angle: 0});
+            }}
           />
         </View>
       </View>
