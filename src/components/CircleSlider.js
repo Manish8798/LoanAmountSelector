@@ -60,18 +60,13 @@ export default class CircleSlider extends Component {
   }
 
   polarToCartesian(angle) {
-    // this.setState({inputValue: v});
-    // this.updateInputValueDebounced(v);
-    // console.log('polarToCartesian', angle);
-    // const v = this.convertAngleToValue(parseInt(angle));
-    // this.updateInputValueDebounced(v, 'polarToCartesian');
     let r = this.props.dialRadius;
     let hC = this.props.dialRadius + this.props.btnRadius;
     let a = ((angle - 90) * Math.PI) / 180.0;
 
     let x = hC + r * Math.cos(a);
     let y = hC + r * Math.sin(a);
-    console.log('polarToCartesian', x, y);
+    // console.log('polarToCartesian', x, y);
     return {x, y};
   }
 
